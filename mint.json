@@ -5,6 +5,7 @@
   ],
   "application": {
     "head": "assets/head.html",
+    "icon": "assets/icon.png",
     "title": "Todos!",
     "meta": {
       "charset": "utf-8"

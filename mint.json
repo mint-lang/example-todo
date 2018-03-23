@@ -1,0 +1,19 @@
+{
+  "name": "todo",
+  "source-directories": [
+    "source"
+  ],
+  "application": {
+    "head": "assets/head.html",
+    "title": "Todos!",
+    "meta": {
+      "charset": "utf-8"
+    }
+  },
+  "dependencies": {
+    "mint-core": {
+      "repository": "https://github.com/mint-lang/mint-core",
+      "constraint": "0.0.0 <= v < 1.0.0"
+    }
+  }
+}

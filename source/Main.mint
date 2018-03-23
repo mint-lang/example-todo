@@ -74,6 +74,7 @@ component Todo {
     text-decoration: {textDecoration};
     align-items: center;
     padding: 10px 15px;
+    opacity: {opacity};
     font-size: 24px;
     display: flex;
     color: #FFF;
@@ -108,22 +109,17 @@ component Todo {
     &:focus {
       outline: none;
     }
-  }
 
-  style checkmark {
-    fill: currentColor;
-    opacity: {opacity};
-  }
-
-  style trashcan {
-    fill: currentColor;
+    & svg {
+      fill: currentColor;
+    }
   }
 
   get opacity : Number {
     if (todo.done) {
-      1
-    } else {
       0.5
+    } else {
+      1
     }
   }
 
@@ -136,7 +132,7 @@ component Todo {
   }
 
   get trashCan : Html {
-    <svg::trashcan
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       height="24"
@@ -156,7 +152,7 @@ component Todo {
   }
 
   get checkMark : Html {
-    <svg::checkmark
+    <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       height="24"
@@ -207,7 +203,7 @@ component Main {
   state : State { value = "" }
 
   style wrapper {
-    background: #FDE74C;
+    background: #E55934;
     height: 100vh;
   }
 
@@ -222,7 +218,7 @@ component Main {
     font-family: Faster One;
     text-align: center;
     font-size: 60px;
-    color: #E55934;
+    color: #FFF;
   }
 
   style input {
@@ -245,7 +241,7 @@ component Main {
   }
 
   style box {
-    background: #FA7921;
+    background: rgba(255, 255, 255, 0.15);
     margin-top: 20px;
     padding: 20px;
   }
@@ -267,6 +263,13 @@ component Main {
       height: 100px;
       width: 100px;
     }
+  }
+
+  style subtitle {
+    font-family: Faster One;
+    margin: 10px 0;
+    font-size: 24px;
+    color: #FFF;
   }
 
   get empty : Html {
@@ -312,7 +315,17 @@ component Main {
         </div>
 
         <div::box>
+          <div::subtitle>
+            <{ "To do:" }>
+          </div>
+
           <{ todos }>
+
+          <div::subtitle>
+            <{ "Done:" }>
+          </div>
+
+          <{ done }>
 
           <form::form onSubmit={addTodo}>
             <input::input
@@ -327,8 +340,17 @@ component Main {
       </div>
     </div>
   } where {
+    done =
+      items
+      |> Array.select(\todo : TodoItem => todo.done)
+      |> Array.map(\todo : TodoItem => <Todo todo={todo}/>)
+
+    todoItems =
+      items
+      |> Array.reject(\todo : TodoItem => todo.done)
+
     todos =
-      if (Array.isEmpty(items)) {
+      if (Array.isEmpty(todoItems)) {
         [
           <div::empty>
             <div>
@@ -339,7 +361,7 @@ component Main {
           </div>
         ]
       } else {
-        Array.map(\todo : TodoItem => <Todo todo={todo}/>, items)
+        Array.map(\todo : TodoItem => <Todo todo={todo}/>, todoItems)
       }
   }
 }

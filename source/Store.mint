@@ -43,7 +43,7 @@ store Todos {
   } where {
     updatedItems =
       items
-      |> Array.reject(\todo : TodoItem => todo.id == item.id)
+      |> Array.reject(\todo : TodoItem => todo == item)
   }
 
   fun toggle (item : TodoItem) : Void {
@@ -54,7 +54,7 @@ store Todos {
       |> Array.map(
         \todo : TodoItem =>
           if (todo.id == item.id) {
-            { item | done = Bool.not(item.done) }
+            { item | done = !item.done }
           } else {
             todo
           })

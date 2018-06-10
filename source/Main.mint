@@ -99,7 +99,7 @@ component Main {
   }
 
   fun handleInput (event : Html.Event) : Void {
-    next { state | value = event.target.value }
+    next { state | value = Dom.getValue(event.target) }
   }
 
   fun addTodo (event : Html.Event) : Void {

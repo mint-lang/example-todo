@@ -7,7 +7,7 @@ record TodoItem {
 store Todos {
   property items : Array(TodoItem) = [
     {
-      name = "Showase Mint!",
+      name = "Showcase Mint!",
       done = true,
       id = 0
     },

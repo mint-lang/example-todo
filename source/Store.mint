@@ -19,7 +19,10 @@ store Todos {
   ]
 
   fun add (name : String) : Void {
-    next { state | items = Array.push(item, items) }
+    do {
+      next { state | items = Array.push(item, items) }
+      save()
+    }
   } where {
     nextId =
       if (Array.isEmpty(items)) {
@@ -39,7 +42,10 @@ store Todos {
   }
 
   fun remove (item : TodoItem) : Void {
-    next { state | items = updatedItems }
+    do {
+      next { state | items = updatedItems }
+      save()
+    }
   } where {
     updatedItems =
       items
@@ -47,7 +53,10 @@ store Todos {
   }
 
   fun toggle (item : TodoItem) : Void {
-    next { state | items = updatedItems }
+    do {
+      next { state | items = updatedItems }
+      save()
+    }
   } where {
     updatedItems =
       items
@@ -58,5 +67,41 @@ store Todos {
           } else {
             todo
           })
+  }
+
+  fun load : Void {
+    try {
+      value =
+        Storage.Local.get("items")
+
+      object =
+        Json.parse(value)
+        |> Maybe.toResult("")
+
+      items =
+        decode object as Array(TodoItem)
+
+      next { state | items = items }
+    } catch Storage.Error => error {
+      void
+    } catch String => error {
+      void
+    } catch Object.Error => error {
+      void
+    }
+  }
+
+  fun save : Void {
+    do {
+      object =
+        encode items
+
+      json =
+        Json.stringify(object)
+
+      Storage.Local.set("items", json)
+    } catch Storage.Error => error {
+      void
+    }
   }
 }

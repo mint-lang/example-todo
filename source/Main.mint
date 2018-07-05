@@ -3,9 +3,13 @@ record State {
 }
 
 component Main {
-  connect Todos exposing { items, add }
+  connect Todos exposing { items, add, load }
 
   state : State { value = "" }
+
+  fun componentDidMount : Void {
+    load()
+  }
 
   style wrapper {
     background: #E55934;

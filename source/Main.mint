@@ -1,11 +1,7 @@
-record State {
-  value : String
-}
-
 component Main {
   connect Todos exposing { items, add, load }
 
-  state : State { value = "" }
+  state value : String = ""
 
   fun componentDidMount : Void {
     load()
@@ -103,16 +99,16 @@ component Main {
   }
 
   fun handleInput (event : Html.Event) : Void {
-    next { state | value = Dom.getValue(event.target) }
+    next { value = Dom.getValue(event.target) }
   }
 
   fun addTodo (event : Html.Event) : Void {
     do {
       Html.Event.preventDefault(event)
 
-      add(state.value)
+      add(value)
 
-      next { state | value = "" }
+      next { value = "" }
     }
   }
 
@@ -139,9 +135,9 @@ component Main {
           <form::form onSubmit={addTodo}>
             <input::input
               onInput={handleInput}
-              value={state.value}/>
+              value={value}/>
 
-            <button::button disabled={String.isEmpty(state.value)}>
+            <button::button disabled={String.isEmpty(value)}>
               <{ "Add" }>
             </button>
           </form>
@@ -151,12 +147,12 @@ component Main {
   } where {
     done =
       items
-      |> Array.select(\todo : TodoItem => todo.done)
-      |> Array.map(\todo : TodoItem => <Todo todo={todo}/>)
+      |> Array.select((todo : TodoItem) : Bool => { todo.done })
+      |> Array.map((todo : TodoItem) : Html => { <Todo todo={todo}/> })
 
     todoItems =
       items
-      |> Array.reject(\todo : TodoItem => todo.done)
+      |> Array.reject((todo : TodoItem) : Bool => { todo.done })
 
     todos =
       if (Array.isEmpty(todoItems)) {
@@ -170,7 +166,7 @@ component Main {
           </div>
         ]
       } else {
-        Array.map(\todo : TodoItem => <Todo todo={todo}/>, todoItems)
+        Array.map((todo : TodoItem) : Html => { <Todo todo={todo}/> }, todoItems)
       }
   }
 }

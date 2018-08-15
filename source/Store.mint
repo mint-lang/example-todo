@@ -5,7 +5,7 @@ record TodoItem {
 }
 
 store Todos {
-  property items : Array(TodoItem) = [
+  state items : Array(TodoItem) = [
     {
       name = "Showcase Mint!",
       done = true,
@@ -20,7 +20,7 @@ store Todos {
 
   fun add (name : String) : Void {
     do {
-      next { state | items = Array.push(item, items) }
+      next { items = Array.push(item, items) }
       save()
     }
   } where {
@@ -29,7 +29,7 @@ store Todos {
         0
       } else {
         items
-        |> Array.map(\todo : TodoItem => todo.id)
+        |> Array.map((todo : TodoItem) : Number => { todo.id })
         |> Array.max()
       }
 
@@ -43,30 +43,31 @@ store Todos {
 
   fun remove (item : TodoItem) : Void {
     do {
-      next { state | items = updatedItems }
+      next { items = updatedItems }
       save()
     }
   } where {
     updatedItems =
       items
-      |> Array.reject(\todo : TodoItem => todo == item)
+      |> Array.reject((todo : TodoItem) : Bool => { todo == item })
   }
 
   fun toggle (item : TodoItem) : Void {
     do {
-      next { state | items = updatedItems }
+      next { items = updatedItems }
       save()
     }
   } where {
     updatedItems =
       items
       |> Array.map(
-        \todo : TodoItem =>
+        (todo : TodoItem) : TodoItem => {
           if (todo.id == item.id) {
             { item | done = !item.done }
           } else {
             todo
-          })
+          }
+        })
   }
 
   fun load : Void {
@@ -81,7 +82,7 @@ store Todos {
       items =
         decode object as Array(TodoItem)
 
-      next { state | items = items }
+      next { items = items }
     } catch Storage.Error => error {
       void
     } catch String => error {

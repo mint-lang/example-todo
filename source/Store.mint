@@ -18,8 +18,8 @@ store Todos {
     }
   ]
 
-  fun add (name : String) : Void {
-    do {
+  fun add (name : String) : Promise(Never, Void) {
+    sequence {
       next { items = Array.push(item, items) }
       save()
     }
@@ -41,8 +41,8 @@ store Todos {
       }
   }
 
-  fun remove (item : TodoItem) : Void {
-    do {
+  fun remove (item : TodoItem) : Promise(Never, Void) {
+    sequence {
       next { items = updatedItems }
       save()
     }
@@ -52,8 +52,8 @@ store Todos {
       |> Array.reject((todo : TodoItem) : Bool => { todo == item })
   }
 
-  fun toggle (item : TodoItem) : Void {
-    do {
+  fun toggle (item : TodoItem) : Promise(Never, Void) {
+    sequence {
       next { items = updatedItems }
       save()
     }
@@ -70,7 +70,7 @@ store Todos {
         })
   }
 
-  fun load : Void {
+  fun load : Promise(Never, Void) {
     try {
       value =
         Storage.Local.get("items")
@@ -79,21 +79,17 @@ store Todos {
         Json.parse(value)
         |> Maybe.toResult("")
 
-      items =
+      decodedItems =
         decode object as Array(TodoItem)
 
-      next { items = items }
-    } catch Storage.Error => error {
-      void
-    } catch String => error {
-      void
-    } catch Object.Error => error {
-      void
+      next { items = decodedItems }
+    } catch {
+      Promise.never()
     }
   }
 
-  fun save : Void {
-    do {
+  fun save : Promise(Never, Void) {
+    sequence {
       object =
         encode items
 
@@ -101,8 +97,10 @@ store Todos {
         Json.stringify(object)
 
       Storage.Local.set("items", json)
+
+      Promise.never()
     } catch Storage.Error => error {
-      void
+      Promise.never()
     }
   }
 }

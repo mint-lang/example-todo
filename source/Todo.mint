@@ -105,11 +105,11 @@ component Todo {
     </svg>
   }
 
-  fun handleRemove (event : Html.Event) : Void {
+  fun handleRemove (event : Html.Event) : Promise(Never, Void) {
     remove(todo)
   }
 
-  fun handleToggle (event : Html.Event) : Void {
+  fun handleToggle (event : Html.Event) : Promise(Never, Void) {
     toggle(todo)
   }
 

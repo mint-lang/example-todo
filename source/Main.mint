@@ -3,7 +3,7 @@ component Main {
 
   state value : String = ""
 
-  fun componentDidMount : Void {
+  fun componentDidMount : Promise(Never, Void) {
     load()
   }
 
@@ -98,12 +98,12 @@ component Main {
     </svg>
   }
 
-  fun handleInput (event : Html.Event) : Void {
+  fun handleInput (event : Html.Event) : Promise(Never, Void) {
     next { value = Dom.getValue(event.target) }
   }
 
-  fun addTodo (event : Html.Event) : Void {
-    do {
+  fun addTodo (event : Html.Event) : Promise(Never, Void) {
+    sequence {
       Html.Event.preventDefault(event)
 
       add(value)
@@ -166,7 +166,9 @@ component Main {
           </div>
         ]
       } else {
-        Array.map((todo : TodoItem) : Html => { <Todo todo={todo}/> }, todoItems)
+        Array.map(
+          (todo : TodoItem) : Html => { <Todo todo={todo}/> },
+          todoItems)
       }
   }
 }

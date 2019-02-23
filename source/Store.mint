@@ -29,7 +29,7 @@ store Todos {
         0
       } else {
         items
-        |> Array.map((todo : TodoItem) : Number => { todo.id })
+        |> Array.map((todo : TodoItem) : Number { todo.id })
         |> Array.max()
       }
 
@@ -49,7 +49,7 @@ store Todos {
   } where {
     updatedItems =
       items
-      |> Array.reject((todo : TodoItem) : Bool => { todo == item })
+      |> Array.reject((todo : TodoItem) : Bool { todo == item })
   }
 
   fun toggle (item : TodoItem) : Promise(Never, Void) {
@@ -61,7 +61,7 @@ store Todos {
     updatedItems =
       items
       |> Array.map(
-        (todo : TodoItem) : TodoItem => {
+        (todo : TodoItem) : TodoItem {
           if (todo.id == item.id) {
             { item | done = !item.done }
           } else {

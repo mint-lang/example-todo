@@ -116,21 +116,45 @@ component Main {
     <div::wrapper>
       <div::base>
         <div::title>
-          <{ "Todos!" }>
+          "Todos!"
         </div>
 
         <div::box>
           <div::subtitle>
-            <{ "To do:" }>
+            "To do:"
           </div>
 
-          <{ todos }>
+          try {
+            todoItems =
+              items
+              |> Array.reject((todo : TodoItem) : Bool { todo.done })
+
+            if (Array.isEmpty(todoItems)) {
+              [
+                <div::empty>
+                  <div>
+                    "All done!"
+                  </div>
+
+                  <{ empty }>
+                </div>
+              ]
+            } else {
+              for (todo of todoItems) {
+                <Todo todo={todo}/>
+              }
+            }
+          }
 
           <div::subtitle>
-            <{ "Done:" }>
+            "Done:"
           </div>
 
-          <{ done }>
+          for (todo of items) {
+            <Todo todo={todo}/>
+          } when {
+            todo.done
+          }
 
           <form::form onSubmit={addTodo}>
             <input::input
@@ -138,37 +162,11 @@ component Main {
               value={value}/>
 
             <button::button disabled={String.isEmpty(value)}>
-              <{ "Add" }>
+              "Add"
             </button>
           </form>
         </div>
       </div>
     </div>
-  } where {
-    done =
-      items
-      |> Array.select((todo : TodoItem) : Bool => { todo.done })
-      |> Array.map((todo : TodoItem) : Html => { <Todo todo={todo}/> })
-
-    todoItems =
-      items
-      |> Array.reject((todo : TodoItem) : Bool => { todo.done })
-
-    todos =
-      if (Array.isEmpty(todoItems)) {
-        [
-          <div::empty>
-            <div>
-              <{ "All done!" }>
-            </div>
-
-            <{ empty }>
-          </div>
-        ]
-      } else {
-        Array.map(
-          (todo : TodoItem) : Html => { <Todo todo={todo}/> },
-          todoItems)
-      }
   }
 }

@@ -31,6 +31,7 @@ store Todos {
         items
         |> Array.map((todo : TodoItem) : Number { todo.id })
         |> Array.max()
+        |> Maybe.withDefault(0)
       }
 
     item =

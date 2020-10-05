@@ -1,17 +1,18 @@
 component Todo {
   connect Todos exposing { remove, toggle }
 
-  property todo : TodoItem = {
-    done = false,
-    name = "",
-    id = 0
-  }
+  property todo : TodoItem =
+    {
+      done = false,
+      name = "",
+      id = 0
+    }
 
   style base {
-    text-decoration: {textDecoration};
+    text-decoration: #{textDecoration};
     align-items: center;
     padding: 10px 15px;
-    opacity: {opacity};
+    opacity: #{opacity};
     font-size: 24px;
     display: flex;
     color: #FFF;
@@ -47,7 +48,7 @@ component Todo {
       outline: none;
     }
 
-    & svg {
+    svg {
       fill: currentColor;
     }
   }

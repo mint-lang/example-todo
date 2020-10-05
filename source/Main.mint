@@ -62,7 +62,7 @@ component Main {
     font-size: 30px;
     color: #FFF;
 
-    & svg {
+    svg {
       fill: currentColor;
       margin-top: 20px;
       height: 100px;
@@ -115,14 +115,10 @@ component Main {
   fun render : Html {
     <div::wrapper>
       <div::base>
-        <div::title>
-          "Todos!"
-        </div>
+        <div::title>"Todos!"</div>
 
         <div::box>
-          <div::subtitle>
-            "To do:"
-          </div>
+          <div::subtitle>"To do:"</div>
 
           try {
             todoItems =
@@ -132,9 +128,7 @@ component Main {
             if (Array.isEmpty(todoItems)) {
               [
                 <div::empty>
-                  <div>
-                    "All done!"
-                  </div>
+                  <div>"All done!"</div>
 
                   <{ empty }>
                 </div>
@@ -146,9 +140,7 @@ component Main {
             }
           }
 
-          <div::subtitle>
-            "Done:"
-          </div>
+          <div::subtitle>"Done:"</div>
 
           for (todo of items) {
             <Todo todo={todo}/>

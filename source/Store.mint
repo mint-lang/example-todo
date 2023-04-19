@@ -5,26 +5,22 @@ record TodoItem {
 }
 
 store Todos {
-  state items : Array(TodoItem) = [
-    {
-      name = "Showcase Mint!",
-      done = true,
-      id = 0
-    },
-    {
-      name = "Try Mint!",
-      done = false,
-      id = 1
-    }
-  ]
+  state items : Array(TodoItem) =
+    [
+      {
+        name: "Showcase Mint!",
+        done: true,
+        id: 0
+      },
+      {
+        name: "Try Mint!",
+        done: false,
+        id: 1
+      }
+    ]
 
-  fun add (name : String) : Promise(Never, Void) {
-    sequence {
-      next { items = Array.push(item, items) }
-      save()
-    }
-  } where {
-    nextId =
+  fun add (name : String) : Promise(Void) {
+    let nextId =
       if (Array.isEmpty(items)) {
         0
       } else {
@@ -34,74 +30,66 @@ store Todos {
         |> Maybe.withDefault(0)
       }
 
-    item =
+    let item =
       {
-        id = nextId + 1,
-        done = false,
-        name = name
+        id: nextId + 1,
+        done: false,
+        name: name
       }
+
+    await next { items: Array.push(items, item) }
+    save()
   }
 
-  fun remove (item : TodoItem) : Promise(Never, Void) {
-    sequence {
-      next { items = updatedItems }
-      save()
-    }
-  } where {
-    updatedItems =
-      items
-      |> Array.reject((todo : TodoItem) : Bool { todo == item })
+  fun remove (item : TodoItem) : Promise(Void) {
+    let updatedItems =
+      Array.reject(items, (todo : TodoItem) : Bool { todo == item })
+
+    await next { items: updatedItems }
+    save()
   }
 
-  fun toggle (item : TodoItem) : Promise(Never, Void) {
-    sequence {
-      next { items = updatedItems }
-      save()
-    }
-  } where {
-    updatedItems =
-      items
-      |> Array.map(
+  fun toggle (item : TodoItem) : Promise(Void) {
+    let updatedItems =
+      Array.map(
+        items,
         (todo : TodoItem) : TodoItem {
           if (todo.id == item.id) {
-            { item | done = !item.done }
+            { item | done: !item.done }
           } else {
             todo
           }
         })
+
+    await next { items: updatedItems }
+    save()
   }
 
-  fun load : Promise(Never, Void) {
-    try {
-      value =
-        Storage.Local.get("items")
+  fun load : Promise(Void) {
+    case (Storage.Local.get("items")) {
+      Result::Ok(json) =>
+        case (Json.parse(json)) {
+          Result::Ok(object) =>
+            case (decode object as Array(TodoItem)) {
+              Result::Ok(items) => next { items: items }
+              => next { }
+            }
 
-      object =
-        Json.parse(value)
-        |> Maybe.toResult("")
+          => next { }
+        }
 
-      decodedItems =
-        decode object as Array(TodoItem)
-
-      next { items = decodedItems }
-    } catch {
-      Promise.never()
+      => next { }
     }
   }
 
-  fun save : Promise(Never, Void) {
-    sequence {
-      object =
-        encode items
+  fun save : Promise(Void) {
+    let object =
+      encode items
 
-      json =
-        Json.stringify(object)
+    let json =
+      Json.stringify(object)
 
-      Storage.Local.set("items", json)
-
-      Promise.never()
-    } catch Storage.Error => error {
-      Promise.never()
-    }
+    Storage.Local.set("items", json)
+    next { }
   }
 }

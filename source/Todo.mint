@@ -3,9 +3,9 @@ component Todo {
 
   property todo : TodoItem =
     {
-      done = false,
-      name = "",
-      id = 0
+      done: false,
+      name: "",
+      id: 0
     }
 
   style base {
@@ -106,11 +106,11 @@ component Todo {
     </svg>
   }
 
-  fun handleRemove (event : Html.Event) : Promise(Never, Void) {
+  fun handleRemove (event : Html.Event) : Promise(Void) {
     remove(todo)
   }
 
-  fun handleToggle (event : Html.Event) : Promise(Never, Void) {
+  fun handleToggle (event : Html.Event) : Promise(Void) {
     toggle(todo)
   }
 

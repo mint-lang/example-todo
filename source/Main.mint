@@ -3,10 +3,6 @@ component Main {
 
   state value : String = ""
 
-  fun componentDidMount : Promise(Never, Void) {
-    load()
-  }
-
   style wrapper {
     background: #E55934;
     height: 100vh;
@@ -98,18 +94,18 @@ component Main {
     </svg>
   }
 
-  fun handleInput (event : Html.Event) : Promise(Never, Void) {
-    next { value = Dom.getValue(event.target) }
+  fun componentDidMount : Promise(Void) {
+    load()
   }
 
-  fun addTodo (event : Html.Event) : Promise(Never, Void) {
-    sequence {
-      Html.Event.preventDefault(event)
+  fun handleInput (event : Html.Event) : Promise(Void) {
+    next { value: Dom.getValue(event.target) }
+  }
 
-      add(value)
-
-      next { value = "" }
-    }
+  fun addTodo (event : Html.Event) : Promise(Void) {
+    Html.Event.preventDefault(event)
+    await add(value)
+    next { value: "" }
   }
 
   fun render : Html {
@@ -120,25 +116,26 @@ component Main {
         <div::box>
           <div::subtitle>"To do:"</div>
 
-          try {
-            todoItems =
-              items
-              |> Array.reject((todo : TodoItem) : Bool { todo.done })
+          <{
+            {
+              let todoItems =
+                Array.reject(items, (todo : TodoItem) : Bool { todo.done })
 
-            if (Array.isEmpty(todoItems)) {
-              [
-                <div::empty>
-                  <div>"All done!"</div>
+              if (Array.isEmpty(todoItems)) {
+                [
+                  <div::empty>
+                    <div>"All done!"</div>
 
-                  <{ empty }>
-                </div>
-              ]
-            } else {
-              for (todo of todoItems) {
-                <Todo todo={todo}/>
+                    <{ empty }>
+                  </div>
+                ]
+              } else {
+                for (todo of todoItems) {
+                  <Todo todo={todo}/>
+                }
               }
             }
-          }
+          }>
 
           <div::subtitle>"Done:"</div>
 

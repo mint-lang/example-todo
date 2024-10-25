@@ -1,4 +1,4 @@
-record TodoItem {
+type TodoItem {
   name : String,
   done : Bool,
   id : Number
@@ -7,21 +7,13 @@ record TodoItem {
 store Todos {
   state items : Array(TodoItem) =
     [
-      {
-        name: "Showcase Mint!",
-        done: true,
-        id: 0
-      },
-      {
-        name: "Try Mint!",
-        done: false,
-        id: 1
-      }
+      { name: "Showcase Mint!", done: true, id: 0 },
+      { name: "Try Mint!", done: false, id: 1 }
     ]
 
   fun add (name : String) : Promise(Void) {
     let nextId =
-      if (Array.isEmpty(items)) {
+      if Array.isEmpty(items) {
         0
       } else {
         items
@@ -31,11 +23,7 @@ store Todos {
       }
 
     let item =
-      {
-        id: nextId + 1,
-        done: false,
-        name: name
-      }
+      { id: nextId + 1, done: false, name: name }
 
     await next { items: Array.push(items, item) }
     save()
@@ -51,10 +39,9 @@ store Todos {
 
   fun toggle (item : TodoItem) : Promise(Void) {
     let updatedItems =
-      Array.map(
-        items,
+      Array.map(items,
         (todo : TodoItem) : TodoItem {
-          if (todo.id == item.id) {
+          if todo.id == item.id {
             { item | done: !item.done }
           } else {
             todo
@@ -66,19 +53,12 @@ store Todos {
   }
 
   fun load : Promise(Void) {
-    case (Storage.Local.get("items")) {
-      Result::Ok(json) =>
-        case (Json.parse(json)) {
-          Result::Ok(object) =>
-            case (decode object as Array(TodoItem)) {
-              Result::Ok(items) => next { items: items }
-              => next { }
-            }
-
-          => next { }
+    if let Ok(json) = Storage.Local.get("items") {
+      if let Ok(object) = Json.parse(json) {
+        if let Ok(items) = decode object as Array(TodoItem) {
+          next { items: items }
         }
-
-      => next { }
+      }
     }
   }
 
@@ -90,6 +70,6 @@ store Todos {
       Json.stringify(object)
 
     Storage.Local.set("items", json)
-    next { }
+    await void
   }
 }

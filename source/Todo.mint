@@ -1,12 +1,42 @@
 component Todo {
   connect Todos exposing { remove, toggle }
 
-  property todo : TodoItem =
-    {
-      done: false,
-      name: "",
-      id: 0
-    }
+  property todo : TodoItem = { done: false, name: "", id: 0 }
+
+  const TRASH_CAN_ICON =
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      height="24"
+      width="24"
+    >
+      <path
+        d={
+          "M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 " \
+          "1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 " \
+          ".552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 " \
+          "1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 " \
+          ".448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 " \
+          "1.631-2h5.315c0 .901.73 2 1.631 2h5.712z"
+        }
+      />
+    </svg>
+
+  const CHECK_MARK_ICON =
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      height="24"
+      width="24"
+    >
+      <path
+        d={
+          "M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 " \
+          "12-12-5.373-12-12-12zm-1.25 17.292l-4.5-4.364 1.857-1.858 2.643 " \
+          "2.506 5.643-5.784 1.857 1.857-7.5 7.643z"
+        }
+      />
+    </svg>
 
   style base {
     text-decoration: #{textDecoration};
@@ -54,7 +84,7 @@ component Todo {
   }
 
   get opacity : Number {
-    if (todo.done) {
+    if todo.done {
       0.5
     } else {
       1
@@ -62,48 +92,11 @@ component Todo {
   }
 
   get textDecoration : String {
-    if (todo.done) {
+    if todo.done {
       "line-through"
     } else {
       ""
     }
-  }
-
-  get trashCan : Html {
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      height="24"
-      width="24">
-
-      <path
-        d={
-          "M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-" \
-          "10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1" \
-          "s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 ." \
-          "552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1" \
-          " 1v10zm4-18v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.31" \
-          "5c0 .901.73 2 1.631 2h5.712z"
-        }/>
-
-    </svg>
-  }
-
-  get checkMark : Html {
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      height="24"
-      width="24">
-
-      <path
-        d={
-          "M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12" \
-          "-12-5.373-12-12-12zm-1.25 17.292l-4.5-4.364 1.857-1.858 " \
-          "2.643 2.506 5.643-5.784 1.857 1.857-7.5 7.643z"
-        }/>
-
-    </svg>
   }
 
   fun handleRemove (event : Html.Event) : Promise(Void) {
@@ -116,17 +109,9 @@ component Todo {
 
   fun render : Html {
     <div::base>
-      <button::icon onClick={handleToggle}>
-        <{ checkMark }>
-      </button>
-
-      <div::span>
-        <{ todo.name }>
-      </div>
-
-      <button::icon onClick={handleRemove}>
-        <{ trashCan }>
-      </button>
+      <button::icon onClick={handleToggle}>CHECK_MARK_ICON</button>
+      <div::span>todo.name</div>
+      <button::icon onClick={handleRemove}>TRASH_CAN_ICON</button>
     </div>
   }
 }
